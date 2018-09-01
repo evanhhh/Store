@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+	<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" 
+		"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+	<!-- 1.namespace：匹配的接口 -->
+	<mapper namespace="cn.tedu.store.mapper.UserMapper">
+	<!-- 添加用户信息 -->
+	<!-- Integer insert(User user) -->
+		<insert id="insert" parameterType="cn.tedu.store.entity.User"
+		useGeneratedKeys="true"
+		keyProperty="id"
+		>
+			insert into t_user(
+				username,
+				password,
+				gender,
+				phone,
+				email,
+				uuid,
+				created_user,
+				created_time,
+				modified_user,
+				modified_time) 
+			values(
+			
+				#{username},
+				#{password},
+				#{gender},
+				#{phone},
+				#{email},
+				#{uuid},
+				#{createdUser},
+				#{createdTime},
+				#{modifiedUser},
+				#{modifiedTime}
+				);
+		</insert>
+		<!-- 查询用户信息 -->
+		<!-- List<User> select(@Param("where")String where,@Param("orderBy")String orderBy,
+			@Param("offset")Integer offset,@Param("countPerPage")Integer countPerPage); -->
+		<select id="select" resultType="cn.tedu.store.entity.User">
+		SELECT 
+			id,
+			username, password,
+			gender, phone, email, uuid,
+			created_user AS createdUser,
+			created_time AS createdTime,
+			modified_user AS modifiedUser,
+			modified_time AS modifiedTime 
+		FROM 
+			t_user 
+			
+			<if test="where != null">
+			WHERE ${where}
+			</if>
+			 
+			<if test="orderBy != null">
+			ORDER BY ${orderBy}
+			</if>
+			 
+			<if test="offset != null">
+			LIMIT #{offset}, #{countPerPage}
+			</if>
+		</select>
+		<!-- 修改用户信息 -->
+		<!-- Integer update(User user) -->
+		<update id="update" parameterType="cn.tedu.store.entity.User">
+		update t_user
+		set 
+			<if test="username != null">
+			username=#{username},
+			</if>
+			<if test="password != null">
+			password=#{password},
+			</if>
+			<if test="gender != null">
+			gender=#{gender},
+			</if>
+			<if test="phone != null">
+			phone=#{phone},
+			</if>
+			<if test="email != null">
+			email=#{email},
+			</if>
+			modified_user=#{modifiedUser},
+			modified_time=#{modifiedTime}
+		where
+			id=#{id}
+		</update>
+		<!--  -->
+		
+		
+	</mapper>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
