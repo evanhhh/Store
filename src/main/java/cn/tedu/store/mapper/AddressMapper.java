@@ -24,4 +24,10 @@ public interface AddressMapper {
 	 * @return 
 	 */
 	Integer delete(@Param("where") String where );
+	/**
+	 * 修改收获地址
+	 * @param address 
+	 * @return
+	 */
+	Integer update(Address address);
 }

@@ -49,10 +49,10 @@
         </div>
         <!--收货人信息填写栏-->
         <div class="rs_content">
-        	<form method="post" action="addnew.do">
+        	<form method="post" action="${actionUrl}">
 	            <!--收货人姓名-->
 	            <div class="recipients">
-	                <span class="red">*</span><span class="kuan">收货人：</span><input type="text" name="recvName" id="receiverName"/>
+	                <span class="red">*</span><span class="kuan">收货人：</span><input type="text" name="recvName" id="receiverName" value="${address.recvName}"/>
 	            </div>
 	            <!--收货人所在城市等信息-->
 	            <div data-toggle="distpicker" class="address_content">
@@ -77,26 +77,28 @@
 	            
 	            <!--收货人详细地址-->
 	            <div class="address_particular">
-	                <span class="red">*</span><span class="kuan">详细地址：</span><textarea name="recvAddress" id="receiverAddress" cols="60" rows="3" placeholder="建议您如实填写详细收货地址"></textarea>
+	                <span class="red">*</span><span class="kuan">详细地址：
+	                </span><textarea name="recvAddress" id="receiverAddress" cols="60" rows="3" placeholder="建议您如实填写详细收货地址" >${address.recvAddress}</textarea>
 	            </div>
 	            <!--收货人地址-->
 	            <div class="address_tel">
 	                <span class="red">*</span>
 	                <span class="kuan">手机号码：</span>
-	                <input type="tel" id="receiverMobile" name="recvPhone"/>
+	                <input type="tel" id="receiverMobile" name="recvPhone"value="${address.recvPhone}"/>
 	                	固定电话：
-	                <input type="text" name="recvTel" id="receiverPhone"/>
+	                <input type="text" name="recvTel" id="receiverPhone"value="${address.recvTel}"/>
 	            </div>
 	            <!--邮政编码-->
 	            <div class="address_postcode">
-	                <span class="red">&nbsp;</span class="kuan"><span>邮政编码：</span>&nbsp;<input type="text" name="recvZip"/>
+	                <span class="red">&nbsp;</span class="kuan"><span>邮政编码：</span>&nbsp;<input type="text" name="recvZip"value="${address.recvZip}"/>
 	            </div>
 	            <!--地址名称-->
 	            <div class="address_name">
-	                <span class="red">&nbsp;</span class="kuan"><span>地址名称：</span>&nbsp;<input type="text" id="addressName" name="tag"/>如：<span class="sp">家</span><span class="sp">公司</span><span class="sp">宿舍</span>
+	                <span class="red">&nbsp;</span class="kuan"><span>地址名称：</span>&nbsp;<input type="text" id="addressName" name="tag" value="${address.tag}"/>如：<span class="sp">家</span><span class="sp">公司</span><span class="sp">宿舍</span>
 	            </div>
 	            <!--保存收货人信息-->
 	            <div>
+	            	 <input type="hidden" name="action" value="${action}"/> 
                		<input class="button" 
                			type="submit" 
                			value="保存收货人信息" />
@@ -127,14 +129,14 @@
                     <span class="dzxq dzxq_normal">${address.recvDistrict } ${address.recvAddress }</span>
                     <span class="lxdh lxdh_normal">${address.recvPhone }</span>
                     <span class="operation operation_normal">
-                    	<a href="#${address.id }" class="aco_change">修改</a> |
+                    	<a href="list.do?action=edit&id=${address.id }" class="aco_change">修改</a> |
                     	<a href="delete.do?id=${address.id }" 
                     		class="aco_delete"
                     		onclick="return confirm('确定删除吗？')">删除</a>
                     </span>
                     <span class="swmr swmr_normal">
                     	<c:if test="${address.isDefault == 0 }">
-                    	<a href="#${address.id }" 
+                    	<a href="set_default.do?id=${address.id }" 
                     		class="swmr swmr_normal">设为默认</a>
                     	</c:if>
                     </span>

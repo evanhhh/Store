@@ -5,9 +5,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.tedu.store.entity.Address;
 import cn.tedu.store.mapper.AddressMapper;
+import cn.tedu.store.service.ex.DataNotExistsException;
 @Service("addressService")
 public class AddressServiceImpl implements IAddressService{
 	@Autowired
@@ -65,11 +67,74 @@ public class AddressServiceImpl implements IAddressService{
 		}
 	}
 	
+	@Transactional
 	public Integer deleteAddressById(Integer id,Integer uid) {
+		//确定删除时的数据
+		Address data = getAddressById(id);
+		//确定删除时的条件
 		String where = "id="+id +" and uid="+uid;
 		Integer rows = addressMapper.delete(where);
-		//TODO 万一把默认删除了，哪个是默认地址？
+		//判断是否删除成功
+		if (rows == 0) {
+			throw new DataNotExistsException("删除失败！尝试删除的数据不存在！请联系系统管理员！");
+		}
+		//判断删除的是否是默认地址
+		if(data.getIsDefault()==1) {
+			//如果删除的是默认的地址，则需要把剩下的地址id值最大的设置未默认地址
+			//根据id的倒序查询找出id最大的数据
+			where ="uid="+uid;
+			String orderBy = "id desc";
+			Integer countPerPage = 1;
+			List<Address> list = addressMapper.select(where, orderBy, null, countPerPage);
+			//判断是否找到数据,如果集合大小大于0表示找到剩下的数据
+			if(list.size()>0) {
+				//取到第一个数据
+				data = list.get(0);
+				//取出这条数据的id，用于设置默认地址
+				Integer dataId = data.getId();
+				//将这条设置为默认地址
+				Address address= new Address();
+				address.setId(dataId);
+				address.setUid(uid);
+				address.setIsDefault(1);
+				rows = addressMapper.update(address);
+				//再次判断是否修改默认地址成功
+				if(rows==0) {
+					//失败
+					throw new DataNotExistsException("设置默认地址失败，请联系管理员");
+				}else {
+					//成功，返回
+					return 1;
+				}
+			}
+		}
+
 		return rows;
+	}
+	
+	@Transactional//使用事务的注解
+	public Integer setDefault(Integer id,Integer uid) {
+		Address address = new Address();
+		address.setIsDefault(0);
+		address.setUid(uid);
+		//将该uid的所有收获地址设置为非默认地址
+		Integer rows = addressMapper.update(address);
+		if(rows>0) {
+			//如果执行行数大于0说明设置成功，接下来进行第二步操作
+			address.setIsDefault(1);
+			address.setId(id);
+			rows=addressMapper.update(address);
+			//判断是否执行成功
+			if(rows>0) {
+				return rows;
+			}else {
+				throw new DataNotExistsException("修改失败[1]，尝试修改的数据不存在！");
+			}
+		}else {
+			//受影响的行数为0，说明不成功，可能是用户非法访问url，或者管理员删除
+			throw new DataNotExistsException("修改失败[2]，尝试修改的数据不存在！");
+		}
+
 	}
 
 }

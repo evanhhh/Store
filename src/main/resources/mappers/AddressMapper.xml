@@ -86,6 +86,34 @@
 	<delete id="delete">
 		delete from t_address where ${where}
 	</delete>
+	<!-- 修改收货地址 -->
+	<!-- Integer update(Address address); -->
+	<update id="update" parameterType="cn.tedu.store.entity.Address">
+		update t_address set
+		<if test="isDefault==null">
+		recv_name=#{recvName},
+		recv_province=#{recvProvince},
+		recv_city=#{recvCity},
+		recv_area=#{recvArea},
+		recv_district=#{recvDistrict},
+		recv_address=#{recvAddress},
+		recv_zip=#{recvZip},
+		recv_phone=#{recvPhone},
+		recv_tel=#{recvTel},
+		tag =#{tag},
+		</if>
+		<if test="isDefault!=null">
+			is_default=#{isDefault},
+		</if>
+		modified_user=#{modifiedUser},
+		modified_time=#{modifiedTime}
+		where
+		uid = #{uid}
+		<if test="id!=null">
+			and id=#{id}
+		</if>
+	
+	</update>
 </mapper>
 	
 	
